@@ -1,0 +1,15 @@
+# Detección y preprocesamiento
+numpy
+opencv-python
+mediapipe
+
+# Extracción HOG y visualización
+scikit-image
+matplotlib
+
+# Lectura y análisis del CSV
+pandas
+
+# Clasificación SVM y persistencia (fase posterior)
+scikit-learn
+joblib
