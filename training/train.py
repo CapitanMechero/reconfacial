@@ -7,7 +7,7 @@ from sklearn.metrics import accuracy_score, f1_score
 from recognition.svm import train_svm, save_model, DEFAULT_MODEL
 
 
-TEST_SIZE = 0.0
+TEST_SIZE = 0.2
 C = 0.1
 SEED = 42
 

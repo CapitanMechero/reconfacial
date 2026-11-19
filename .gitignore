@@ -3,6 +3,6 @@ __pycache__/
 .venv/
 .pytest_cache/
 .env
-data/
-models/
 database/storage/
+# Fotografías del dataset
+dataset/
