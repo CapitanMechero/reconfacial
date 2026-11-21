@@ -36,7 +36,7 @@ La práctica no pide eliminar, y no se ofrece ni en la app ni en la API.
 
 ## Estado técnico
 
-- **Tests:** 150 en `tests/` (se ejecutan en la CI) más 16 en `legacy/` (`python -m pytest legacy`). `ruff` y `mypy` sin errores.
+- **Tests:** 151 en `tests/` (se ejecutan en la CI) más 16 en `legacy/` (`python -m pytest legacy`). `ruff` y `mypy` sin errores.
 - **Umbrales calibrados y adoptados** (`data/thresholds.json`): T1 = −0,271, T2 = 0,272, T1v = −0,608 y T2v = 0,029.
 - **Resultados en test:**
   - Verificación: FAR del 1,0 % y FRR del 45 %.

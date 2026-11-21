@@ -210,24 +210,34 @@ def test_invalid_keys(bad, tmp_path):
         parse_key(bad)
 
 
-def _add_many(db, man, key, prefix, n):
-    s = CsvIdentityStore(db, key, man)
-    for i in range(n):
-        s.add_identity(f"{prefix}{i}", [reg(i)])
+_WRITER = """
+import sys
+from database.csv_store import CsvIdentityStore
+from recognition.template import extract_template
+from tests.synthetic import make_face
+db, man, key, prefix = sys.argv[1], sys.argv[2], bytes.fromhex(sys.argv[3]), sys.argv[4]
+s = CsvIdentityStore(db, key, man)
+for i in range(6):
+    s.add_identity(f"{prefix}{i}", [extract_template(make_face(i))])
+"""
 
 
 def test_concurrent_writes_from_two_processes(tmp_path, key):
-    """La app y `python -m sistema` pueden escribir a la vez: no se pierde ni corrompe nada."""
-    import multiprocessing as mp
+    """La app y `python -m sistema` pueden escribir a la vez: no se pierde ni corrompe nada.
+
+    Procesos independientes con ``subprocess`` (no ``multiprocessing``, que reejecutaría
+    el módulo principal del proceso de pytest)."""
+    import subprocess
+    import sys
+    from pathlib import Path
     pytest.importorskip("fcntl")
     db, man = tmp_path / "db.csv", tmp_path / "state" / "manifest.json"
     CsvIdentityStore(db, key, man)
-    ctx = mp.get_context("spawn")
-    procs = [ctx.Process(target=_add_many, args=(db, man, key, p, 6)) for p in ("a", "b")]
+    root = Path(__file__).resolve().parents[1]
+    procs = [subprocess.Popen([sys.executable, "-c", _WRITER, str(db), str(man), key.hex(), p],
+                              cwd=root, stderr=subprocess.PIPE, text=True) for p in ("a", "b")]
     for p in procs:
-        p.start()
-    for p in procs:
-        p.join(60)
-        assert p.exitcode == 0
+        _, err = p.communicate(timeout=120)
+        assert p.returncode == 0, err
     final = CsvIdentityStore(db, key, man)
     assert len(final.list_identities()) == 12 and final.generation == 12

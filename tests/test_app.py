@@ -46,3 +46,16 @@ def test_tampered_database_shows_integrity_error(env, tmp_path):
     at = run()
     assert not at.exception
     assert any("integridad" in e.value.lower() or "manifiesto" in e.value.lower() for e in at.error)
+
+
+def test_detector_failure_shows_error_instead_of_crashing(env, tmp_path):
+    env.setenv("FACE_LANDMARKER_MODEL", str(tmp_path / "no_existe.task"))
+    from recognition.detector import get_default_detector
+    get_default_detector.cache_clear()
+    try:
+        at = run()
+    finally:
+        get_default_detector.cache_clear()
+    assert not at.exception
+    assert any("detector de caras" in e.value for e in at.error)
+    assert not at.tabs

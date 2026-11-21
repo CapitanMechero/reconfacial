@@ -215,16 +215,20 @@ def main() -> None:
     except TemplateCorruptError as exc:
         st.error(f"Fallo de integridad de la base de datos: {exc}")
         st.stop()
+        return   # sin contexto de Streamlit (p. ej. al importarse), st.stop() no detiene
     except (KeyConfigurationError, StorageError) as exc:
         st.error(f"No se puede abrir la base de datos: {exc}")
         st.stop()
+        return   # sin contexto de Streamlit (p. ej. al importarse), st.stop() no detiene
     except (OSError, ModelNotFoundError) as exc:
         st.error(f"No se puede cargar el detector de caras (MediaPipe): {exc}")
         st.stop()
+        return   # sin contexto de Streamlit (p. ej. al importarse), st.stop() no detiene
     except Exception:  # noqa: BLE001 - última barrera de la UI: se registra completa
         logging.getLogger(__name__).exception("Fallo al iniciar la aplicación")
         st.error("Error inesperado al iniciar la aplicación; revisa los registros.")
         st.stop()
+        return   # sin contexto de Streamlit (p. ej. al importarse), st.stop() no detiene
 
     try:
         sidebar(service)

@@ -18,6 +18,10 @@ jobs:
           python-version: "3.12"
           cache: pip
           cache-dependency-path: requirements*.txt
+      - name: Bibliotecas nativas de MediaPipe/OpenCV (las mismas que el Dockerfile)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libgl1 libegl1 libgles2 libglib2.0-0
       - name: Dependencias
         run: pip install -r requirements-dev.txt
       - name: Modelo de MediaPipe (descarga y verificación SHA-256)
