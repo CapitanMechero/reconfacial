@@ -1,8 +1,28 @@
+# Python y herramientas
 __pycache__/
 *.pyc
 .venv/
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Configuración local
 .env
-database/storage/
-# Fotografías del dataset
+secrets/
+
+# Fotografías (datos biométricos: nunca en git). Las del docente van en data/fotos/
+data/fotos/
 dataset/
+entrada/*
+!entrada/README.md
+
+# Estado de ejecución local: BD en uso, clave HMAC, manifiesto y SVM (borrar = primer arranque)
+var/
+*.tmp
+
+# Salidas de los scripts de legacy/integrante3 (almacén ORB provisional)
+data/orb/
+data/orb_dataset.csv
+
+# Archivos del sistema
+desktop.ini

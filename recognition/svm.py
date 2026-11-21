@@ -7,7 +7,9 @@ from sklearn.svm import LinearSVC
 from recognition.hog import N_FEATURES
 
 
-DEFAULT_MODEL = Path(__file__).resolve().parents[1] / "models" / "svm.joblib"
+# Modelo del flujo experimental anterior (legacy/README.md). La aplicación NO lo usa:
+# gestiona su propio SVM firmado (recognition.model_lifecycle).
+DEFAULT_MODEL = Path(__file__).resolve().parents[1] / "legacy" / "svm.joblib"
 
 
 def train_svm(X, y, C=0.1):
@@ -49,8 +51,8 @@ def load_model(path=DEFAULT_MODEL):
     return joblib.load(path)
 
 
-def predict_identity(hog_features, model=None):
-    """Identidad candidata y puntuación de decisión."""
+def decision_scores(hog_features, model=None):
+    """Clases y puntuación de decisión de cada una (no son probabilidades)."""
 
     vector = np.asarray(hog_features, dtype=np.float32)
 
@@ -68,9 +70,16 @@ def predict_identity(hog_features, model=None):
     if len(model.classes_) == 2:
         scores = np.array([-scores[0], scores[0]])
 
+    return [str(c) for c in model.classes_], scores
+
+
+def predict_identity(hog_features, model=None):
+    """Identidad candidata y puntuación de decisión."""
+
+    classes, scores = decision_scores(hog_features, model)
     winner = int(np.argmax(scores))
 
-    return str(model.classes_[winner]), float(scores[winner])
+    return classes[winner], float(scores[winner])
 
 
 def passes_threshold(score, threshold):

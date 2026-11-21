@@ -1,1 +1,0 @@
-Ejecutar con: python -m training.train

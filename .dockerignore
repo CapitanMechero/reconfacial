@@ -1,0 +1,24 @@
+# En la imagen solo entra la BD semilla (data/famosos.csv, decisión del equipo), las fotos
+# reservadas (lista) y los umbrales. Nunca: fotos, BD en uso, clave HMAC ni modelos derivados.
+data/*
+!data/famosos.csv
+!data/holdout.csv
+!data/thresholds.json
+models/svm*
+legacy/
+entrada/
+models/thresholds.json
+secrets/
+var/
+.env
+*.sqlite3
+dataset/
+evaluation/results/
+# Entorno y control de versiones
+.venv/
+.git/
+**/__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+docs/desktop.ini

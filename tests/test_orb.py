@@ -7,7 +7,7 @@ import pytest
 from skimage import data
 
 from recognition.orb import OrbTemplate, OrbExtractionError, extract_orb
-from recognition.matching import (match_identity, score_pair, calibrate_t2, far_frr)
+from recognition.matching import (match_identity, calibrate_t2, far_frr)
 
 SIZE = 128
 
