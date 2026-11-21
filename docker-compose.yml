@@ -1,0 +1,29 @@
+services:
+  facerec:
+    build: .
+    image: facerec:local
+    ports:
+      - "127.0.0.1:8501:8501"     # solo accesible desde este equipo
+    environment:
+      FACEREC_LOG_LEVEL: ${FACEREC_LOG_LEVEL:-INFO}
+      FACEREC_T1: ${FACEREC_T1:-}
+      FACEREC_T2: ${FACEREC_T2:-}
+    volumes:
+      # BD CSV en uso + SVM. Se crea en el primer arranque copiando data/famosos.csv.
+      - facerec-data:/var/lib/facerec
+      # Clave HMAC + manifiesto firmado, SEPARADOS de la BD. Se crean en el primer arranque.
+      - facerec-state:/var/lib/facerec-state
+      # Fotos/templates de prueba para `docker compose exec facerec python -m sistema ...`
+      - ./entrada:/entrada:ro
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /home/facerec
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+
+volumes:
+  facerec-data:
+  facerec-state:

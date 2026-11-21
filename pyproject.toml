@@ -1,0 +1,33 @@
+# Solo configuración de herramientas (el proyecto no se distribuye como paquete).
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning:google.*", "ignore::DeprecationWarning:mediapipe.*"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+extend-exclude = [".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "BLE"]
+ignore = ["E501", "B905"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B011"]
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+warn_unused_ignores = true
+no_implicit_optional = true
+check_untyped_defs = true
+files = ["recognition/types.py", "recognition/config.py", "recognition/recognition.py",
+         "recognition/service.py", "recognition/model_lifecycle.py", "recognition/bootstrap.py",
+         "recognition/template.py", "sistema.py",
+         "database", "evaluation"]
+
+# Módulos originales del equipo: se usan tal cual, sin anotaciones de tipos completas.
+[[tool.mypy.overrides]]
+module = ["recognition.orb", "recognition.matching", "recognition.detector",
+          "recognition.preprocessing", "recognition.svm", "recognition.hog"]
+ignore_errors = true

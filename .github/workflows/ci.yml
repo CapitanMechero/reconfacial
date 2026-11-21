@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements*.txt
+      - name: Bibliotecas nativas de MediaPipe/OpenCV (las mismas que el Dockerfile)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libgl1 libegl1 libgles2 libglib2.0-0
+      - name: Dependencias
+        run: pip install -r requirements-dev.txt
+      - name: Modelo de MediaPipe (descarga y verificación SHA-256)
+        run: python scripts/download_models.py
+      - name: Lint
+        run: ruff check .
+      - name: Tipos
+        run: mypy
+      - name: Tests (unitarios, integración y extremo a extremo)
+        run: pytest -q
+
+  docker:
+    runs-on: ubuntu-24.04
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Construir y arrancar
+        run: docker compose up -d --build
+      - name: Esperar healthcheck
+        run: |
+          for i in $(seq 1 40); do
+            state=$(docker inspect -f '{{.State.Health.Status}}' "$(docker compose ps -q facerec)")
+            echo "estado: $state"; [ "$state" = healthy ] && exit 0; sleep 5
+          done
+          docker compose logs; exit 1
+      - name: La aplicación arranca sin errores de configuración
+        run: |
+          docker compose exec -T facerec python -c "import numpy as np; from sistema import SistemaBiometrico; from recognition.detector import get_default_detector; s=SistemaBiometrico(); n=len(s.identidades()); print(n, s.service.model_status()); assert n >= 51; get_default_detector().detect(np.zeros((256,256,3), np.uint8)); r=s.identificar(np.zeros((256,256,3), np.uint8)); print(r.status, r.error); assert r.error.code.value == 'no_face'"
+      - name: Limpieza
+        if: always()
+        run: docker compose down -v

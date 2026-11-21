@@ -29,3 +29,26 @@ class MultipleFacesError(FaceProcessingError):
             f"Se han detectado {count} caras en la imagen. "
             "Sube una fotografía en la que aparezca una sola persona."
         )
+
+class SvmUnavailableError(RuntimeError):
+    """No hay un modelo SVM utilizable (no entrenado, ausente o ilegible)."""
+
+
+class StorageError(RuntimeError):
+    """Fallo de persistencia (base de datos o modelo en disco)."""
+
+
+class TemplateCorruptError(StorageError):
+    """Un template almacenado no se puede descifrar o interpretar."""
+
+
+class KeyConfigurationError(RuntimeError):
+    """Clave de cifrado ausente, mal formada o incorrecta para los datos."""
+
+
+class DuplicateIdentityError(ValueError):
+    """Ya existe una identidad con ese nombre."""
+
+
+class IdentityNotFoundError(LookupError):
+    """La identidad solicitada no está registrada."""

@@ -1,0 +1,9 @@
+{
+  "t1": -0.27059997504790556,
+  "t2": 0.2715701470104739,
+  "orb_min_margin": 0.01,
+  "t1_verify": -0.6077872838041787,
+  "t2_verify": 0.029383304694524923,
+  "orb_min_evidence": 0.0,
+  "source": "evaluation.deployed (calibraci\u00f3n, FAR objetivo 0.01)"
+}
